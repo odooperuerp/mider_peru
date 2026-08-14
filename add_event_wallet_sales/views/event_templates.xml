@@ -1,0 +1,12 @@
+<odoo>
+    <template id="event_wallet_button" inherit_id="website_event.event_registration_form">
+        <xpath expr="//button[@id='o_wevent_register_button']" position="after">
+            <t t-if="wallet_balance >= ticket.price">
+                <a t-att-href="'/event/%s/wallet_register' % event.id"
+                   class="btn btn-primary">
+                   Confirmar con monedero (Saldo: <t t-esc="wallet_balance"/>)
+                </a>
+            </t>
+        </xpath>
+    </template>
+</odoo>
