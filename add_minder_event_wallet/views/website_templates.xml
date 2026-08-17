@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Cambiamos el inherit_id a la vista nativa del menú de usuario -->
+    <template id="custom_header_ewallet_balance" inherit_id="portal.user_dropdown">
+        
+        <!-- Nos ubicamos justo ANTES del botón que despliega el menú con tu nombre -->
+        <xpath expr="//a[@data-bs-toggle='dropdown']" position="before">
+            
+            <!-- Buscamos las tarjetas de eWallet del usuario logueado -->
+            <!-- Nota: No necesitamos validar si es público porque este menú solo se renderiza si ya inició sesión -->
+            <t t-set="mis_tarjetas" t-value="request.env['loyalty.card'].sudo().search([
+                ('partner_id', '=', request.env.user.partner_id.id),
+                ('program_id.program_type', '=', 'ewallet')
+            ])"/>
+            
+            <!-- Calculamos la suma total -->
+            <t t-set="saldo_total" t-value="sum(mis_tarjetas.mapped('points'))"/>
+
+            <!-- Mostramos la "pastilla" del saldo en línea con tu nombre -->
+            <span class="d-none d-md-inline-block align-middle bg-light rounded-pill border px-3 py-1 me-3" style="cursor: default;">
+                <i class="fa fa-google-wallet text-primary me-1"/>
+                <span class="fw-bold text-dark">Saldo: </span>
+                <span class="fw-bold text-success" 
+                      t-esc="saldo_total" 
+                      t-options="{'widget': 'monetary', 'display_currency': website.currency_id if website else request.env.user.company_id.currency_id}"/>
+            </span>
+            
+        </xpath>
+    </template>
+</odoo>
